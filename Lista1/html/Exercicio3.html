@@ -1,0 +1,335 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Exercicio3</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-08-23"><meta name="DC.source" content="Exercicio3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Criando os dados</a></li><li><a href="#3">Criando os sinais e plotando:</a></li><li><a href="#4">Gerando os sinais na frequ&ecirc;ncia e plotando:</a></li><li><a href="#5">Gerando os filtros:</a></li><li><a href="#6">Passando o sinal pelos filtros e plotando:</a></li><li><a href="#7">Gerando e plotando os sinais filtrados no dom&iacute;nio da frequ&ecirc;ncia:</a></li></ul></div><pre class="codeinput"><span class="comment">%%Exerc&iacute;cio 2:</span>
+clc;
+clear <span class="string">all</span>;
+close <span class="string">all</span>;
+</pre><h2>Criando os dados<a name="2"></a></h2><pre class="codeinput">f1 = 2*pi*1000;
+f2 = 2*pi*3000;
+f3 = 2*pi*5000;
+fs = 2*pi*15000;
+
+t = 0:1/fs:1;
+</pre><h2>Criando os sinais e plotando:<a name="3"></a></h2><pre class="codeinput">x1t = 5*sin(f1*t);
+x2t = (5/3)*sin(f2*t);
+x3t = sin(f3*t);
+
+st = x1t + x2t + x3t;
+
+figure(1);
+subplot(2,2,1);
+plot(t, x1t);
+title(<span class="string">'5.Sin(1000.t)'</span>);
+xlim([0 50/f1]);
+
+subplot(2,2,2);
+plot(t,x2t);
+title(<span class="string">'1,6666.Sin(3000.t)'</span>);
+xlim([0 50/f2]);
+
+subplot(2,2,3);
+plot(t,x3t);
+title(<span class="string">'Sin(5000.t)'</span>);
+xlim([0 50/f3]);
+
+subplot(2,2,4);
+plot(t,st);
+title(<span class="string">'Soma dos sinais'</span>);
+xlim([0 100/f3]);
+</pre><img vspace="5" hspace="5" src="Exercicio3_01.png" alt=""> <h2>Gerando os sinais na frequ&ecirc;ncia e plotando:<a name="4"></a></h2><pre class="codeinput">f = -fs/2:fs/2;
+
+X1wz = fft(x1t);
+X1w = fftshift(X1wz)/length(X1wz);
+
+figure(2);
+subplot(2,2,1);
+plot(f, X1w);
+title(<span class="string">'5.Sin(1000.t)'</span>);
+xlim([-1200 1200]);
+
+X2wz = fft(x2t);
+X2w = fftshift(X2wz)/length(X2wz);
+subplot(2,2,2);
+plot(f, X2w);
+title(<span class="string">'1,666.Sin(3000.t)'</span>);
+xlim([-3500 3500]);
+
+X3wz = fft(x3t);
+X3w = fftshift(X3wz)/length(X3wz);
+subplot(2,2,3);
+plot(f,X3w);
+title(<span class="string">'Sin(5000.t)'</span>);
+xlim([-5600 5600]);
+
+Swz = fft(st);
+Sw = fftshift(Swz)/length(Swz);
+subplot(2,2,4);
+plot(f, Sw);
+title(<span class="string">'Soma dos sinais'</span>);
+xlim([-5600 5600]);
+</pre><pre class="codeoutput">Warning: Imaginary parts of complex X and/or Y arguments ignored 
+Warning: Imaginary parts of complex X and/or Y arguments ignored 
+Warning: Imaginary parts of complex X and/or Y arguments ignored 
+Warning: Imaginary parts of complex X and/or Y arguments ignored 
+</pre><img vspace="5" hspace="5" src="Exercicio3_02.png" alt=""> <h2>Gerando os filtros:<a name="5"></a></h2><pre class="codeinput">figure(3);
+lowfil = fir1(50, (2000)/fs);
+freqz(lowfil);
+
+figure(4);
+highfil = fir1(50, 4000/fs, <span class="string">'high'</span>);
+freqz(highfil);
+
+figure(5);
+middlefil = fir1(50, [2000 4000]/fs);
+freqz(middlefil);
+</pre><img vspace="5" hspace="5" src="Exercicio3_03.png" alt=""> <img vspace="5" hspace="5" src="Exercicio3_04.png" alt=""> <img vspace="5" hspace="5" src="Exercicio3_05.png" alt=""> <h2>Passando o sinal pelos filtros e plotando:<a name="6"></a></h2><pre class="codeinput">figure(6);
+subplot(3,1,1);
+
+slowfil = filter(lowfil, 1, st);
+plot(t, slowfil);
+xlim([0 100/f3]);
+title(<span class="string">'Sinal filtrado com passa baixa no dom&iacute;nio do tempo'</span>);
+
+smiddlefil = filter(middlefil, 1, st);
+subplot(3,1,2);
+plot(t,smiddlefil);
+xlim([0 100/f3]);
+title(<span class="string">'Sinal filtrado com passa faixa no dom&iacute;nio do tempo'</span>);
+
+shighfil = filter(highfil,1,st);
+subplot(3,1,3);
+plot(t,shighfil);
+xlim([0 100/f3]);
+title(<span class="string">'Sinal filtrado com passa alta no dom&iacute;nio do tempo'</span>);
+</pre><img vspace="5" hspace="5" src="Exercicio3_06.png" alt=""> <h2>Gerando e plotando os sinais filtrados no dom&iacute;nio da frequ&ecirc;ncia:<a name="7"></a></h2><pre class="codeinput">figure(7);
+
+Slowfilz = fft(slowfil);
+Slowfilw = fftshift(Slowfilz)/length(Slowfilz);
+subplot(3,1,1);
+plot(f, Slowfilw);
+title(<span class="string">'Sinal com filtro passa baixas no dom&iacute;nio da frequ&ecirc;ncia'</span>);
+xlim([-1200 1200])
+
+Smiddlefilz = fft(smiddlefil);
+Smiddlefilw = fftshift(Smiddlefilz)/length(Smiddlefilz);
+subplot(3,1,2);
+plot(f, Smiddlefilw);
+title(<span class="string">'Sinal com filtro passa faixa no dom&iacute;nio da frequ&ecirc;ncia'</span>);
+xlim([-3500 3500]);
+
+Shighfilz = fft(shighfil);
+Shighfilw = fftshift(Shighfilz)/length(Shighfilz);
+subplot(3,1,3);
+plot(f,Shighfilw);
+title(<span class="string">'Sinal com filtro passa alta no dom&iacute;nio da frequ&ecirc;ncia'</span>);
+xlim([-5600 5600]);
+</pre><pre class="codeoutput">Warning: Imaginary parts of complex X and/or Y arguments ignored 
+Warning: Imaginary parts of complex X and/or Y arguments ignored 
+Warning: Imaginary parts of complex X and/or Y arguments ignored 
+</pre><img vspace="5" hspace="5" src="Exercicio3_07.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%Exercício 2:
+clc;
+clear all;
+close all;
+
+%% Criando os dados
+f1 = 2*pi*1000;
+f2 = 2*pi*3000;
+f3 = 2*pi*5000;
+fs = 2*pi*15000;
+
+t = 0:1/fs:1;
+
+%% Criando os sinais e plotando:
+
+x1t = 5*sin(f1*t);
+x2t = (5/3)*sin(f2*t);
+x3t = sin(f3*t);
+
+st = x1t + x2t + x3t;
+
+figure(1);
+subplot(2,2,1);
+plot(t, x1t);
+title('5.Sin(1000.t)');
+xlim([0 50/f1]);
+
+subplot(2,2,2);
+plot(t,x2t);
+title('1,6666.Sin(3000.t)');
+xlim([0 50/f2]);
+
+subplot(2,2,3);
+plot(t,x3t);
+title('Sin(5000.t)');
+xlim([0 50/f3]);
+
+subplot(2,2,4);
+plot(t,st);
+title('Soma dos sinais');
+xlim([0 100/f3]);
+
+%% Gerando os sinais na frequência e plotando:
+f = -fs/2:fs/2;
+
+X1wz = fft(x1t);
+X1w = fftshift(X1wz)/length(X1wz);
+
+figure(2);
+subplot(2,2,1);
+plot(f, X1w);
+title('5.Sin(1000.t)');
+xlim([-1200 1200]);
+
+X2wz = fft(x2t);
+X2w = fftshift(X2wz)/length(X2wz);
+subplot(2,2,2);
+plot(f, X2w);
+title('1,666.Sin(3000.t)');
+xlim([-3500 3500]);
+
+X3wz = fft(x3t);
+X3w = fftshift(X3wz)/length(X3wz);
+subplot(2,2,3);
+plot(f,X3w);
+title('Sin(5000.t)');
+xlim([-5600 5600]);
+
+Swz = fft(st);
+Sw = fftshift(Swz)/length(Swz);
+subplot(2,2,4);
+plot(f, Sw);
+title('Soma dos sinais');
+xlim([-5600 5600]);
+
+%% Gerando os filtros:
+
+figure(3);
+lowfil = fir1(50, (2000)/fs);
+freqz(lowfil);
+
+figure(4);
+highfil = fir1(50, 4000/fs, 'high');
+freqz(highfil);
+
+figure(5);
+middlefil = fir1(50, [2000 4000]/fs);
+freqz(middlefil);
+
+%% Passando o sinal pelos filtros e plotando:
+
+figure(6);
+subplot(3,1,1);
+
+slowfil = filter(lowfil, 1, st);
+plot(t, slowfil);
+xlim([0 100/f3]);
+title('Sinal filtrado com passa baixa no domínio do tempo');
+
+smiddlefil = filter(middlefil, 1, st);
+subplot(3,1,2);
+plot(t,smiddlefil);
+xlim([0 100/f3]);
+title('Sinal filtrado com passa faixa no domínio do tempo');
+
+shighfil = filter(highfil,1,st);
+subplot(3,1,3);
+plot(t,shighfil);
+xlim([0 100/f3]);
+title('Sinal filtrado com passa alta no domínio do tempo');
+
+%% Gerando e plotando os sinais filtrados no domínio da frequência:
+
+figure(7);
+
+Slowfilz = fft(slowfil);
+Slowfilw = fftshift(Slowfilz)/length(Slowfilz);
+subplot(3,1,1);
+plot(f, Slowfilw);
+title('Sinal com filtro passa baixas no domínio da frequência');
+xlim([-1200 1200])
+
+Smiddlefilz = fft(smiddlefil);
+Smiddlefilw = fftshift(Smiddlefilz)/length(Smiddlefilz);
+subplot(3,1,2);
+plot(f, Smiddlefilw);
+title('Sinal com filtro passa faixa no domínio da frequência');
+xlim([-3500 3500]);
+
+Shighfilz = fft(shighfil);
+Shighfilw = fftshift(Shighfilz)/length(Shighfilz);
+subplot(3,1,3);
+plot(f,Shighfilw);
+title('Sinal com filtro passa alta no domínio da frequência');
+xlim([-5600 5600]);
+
+
+##### SOURCE END #####
+--></body></html>

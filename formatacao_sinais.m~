@@ -1,0 +1,368 @@
+%% Formatando sinal
+
+clc
+clear all;
+close all
+
+% sinal de informação
+info = [0 1 1 0 1];
+
+% tamanho da superamostragem
+n = 100;
+
+% superamostrando info:
+info_up = upsample(info, n);
+
+% gernado o filtro: NRZ
+filtro_NRZ = ones(1,n);
+
+% Gerando a onda formatada:
+info_tx = filter(filtro_NRZ, 1, info_up);
+
+% plotando
+subplot(2,1,1);
+plot(info_up);
+title('Sinal pré formatação');
+ylim([0 2]);
+
+subplot(2,1,2);
+plot(info_tx)
+title('Sinal formatado');
+ylim([0 2]);
+
+% plotando em Stem
+figure(2)
+subplot(2,1,1);
+stem(info_up);
+title('Sinal pré formatação');
+ylim([0 2]);
+
+subplot(2,1,2);
+stem(info_tx);
+title('Sinal formatado');
+ylim([0 2]);
+
+%% Formatando em vários níveis
+
+clear all
+close all
+clc
+
+% Formatando em mais de 1 nível
+
+N = 100;
+M = 2;% Número de níveis
+A = 1; % Amplitude máxima
+dist_nivel = 2; %Distancia entre níveis
+
+% Número de bits por nível
+l = log2(M);
+
+% Gerando número de símbolos:
+num_simb = 500;
+
+% Informação de entrada
+info_bin = randint(1, num_simb*l);
+
+% Fazendo o reshape para o bi2de
+info_bin = transpose(reshape(info_bin, l , num_simb));
+
+% Transformando em decimal à cada 2 bits:
+info = bi2de(info_bin, 'left-msb')*dist_nivel-A;%----- Mapeamento: 00 --> 0 --> -3
+info_up = upsample(info,N);                 %             01 --> 1 --> -1
+                                            %             10 --> 2 -->  2
+                                            %             11 --> 3 -->  3
+% Filtrando
+filtro = ones(1, N);
+info_tx = filter(filtro, 1, info_up);
+
+% plotando
+plot(info_tx)
+xlim([0 20*N])
+ylim([-4 4])
+
+%% Presença do ruído:
+
+% Formatando em vários níveis
+
+clear all
+close all
+clc
+
+% Formatando em mais de 1 nível
+
+N = 100;
+M = 4;  % Número de níveis
+A = 3; % Amplitude máxima
+dist_nivel = 2; %Distancia entre níveis
+
+% Número de bits por nível
+l = log2(M);
+
+% Gerando número de símbolos:
+num_simb = 500;
+
+% Informação de entrada
+info_bin = randint(1, num_simb*l);
+
+% Fazendo o reshape para o bi2de
+info_bin = transpose(reshape(info_bin, l , num_simb));
+
+% Transformando em decimal à cada 2 bits:
+info = bi2de(info_bin, 'left-msb')*dist_nivel-A;%----- Mapeamento: 00 --> 0 --> -3
+info_up = upsample(info,N);                 %             01 --> 1 --> -1
+                                            %             10 --> 2 -->  2
+                                            %             11 --> 3 -->  3
+% Filtrando
+filtro = ones(1, N);
+info_tx = filter(filtro, 1, info_up);
+
+% Gerando o sinal de saída com ruído: 
+vari = 2;
+mean = 0;
+                                                        %outramaneira: Não utilizar vari, utiliza AWGN, relação sinal ruído                                                                          
+ruido = sqrt(vari)*rand(length(info_tx), 1)+mean;       %SNR = 10; (dB)
+info_rx = info_tx + ruido;                              %info_rx = awgn(info_tx,SNR);
+                                                       
+% plotando
+
+subplot(2,1,1);
+plot(info_tx)
+xlim([0 20*N])
+ylim([-4 4])
+title('Sinal');
+
+subplot(2,1,2);
+plot(info_rx)
+xlim([0 20*N])
+ylim([-5 5])
+title('Sinal com ruído');
+
+
+%% Recepção do sinal:
+
+% Formatando em vários níveis
+
+clear all
+close all
+clc
+
+% Formatando em mais de 1 nível
+
+N = 100; %Amostras por pulso
+M = 2;  % Número de níveis
+A = 1; % Amplitude máxima
+dist_nivel = 2; %Distancia entre níveis
+
+% Número de bits por nível
+l = log2(M);
+
+% Gerando número de símbolos:
+num_simb = 50;
+
+% Informação de entrada
+info_bin = randint(1, num_simb*l);
+
+% Fazendo o reshape para o bi2de
+info_bin = transpose(reshape(info_bin, l , num_simb));
+
+% Transformando em decimal à cada 2 bits:
+info = bi2de(info_bin, 'left-msb')*dist_nivel-A;%----- Mapeamento: 00 --> 0 --> -3
+info_up = upsample(info,N);                 %             01 --> 1 --> -1
+                                            %             10 --> 2 -->  2
+                                            %             11 --> 3 -->  3
+% Filtrando
+filtro = ones(1, N);
+info_tx = filter(filtro, 1, info_up);
+                                                     
+% plotando
+
+subplot(3,1,1);
+plot(info_tx)
+xlim([0 20*N])
+ylim([-4 4])
+title('Sinal na transmissão');
+
+SNR = 0;
+info_rx = awgn(info_tx,SNR);
+
+subplot(3,1,2);
+plot(info_rx)
+xlim([0 20*N])
+ylim([-5 5])
+title('Sinal na recepção');
+
+% =------ Recebendo o sinal:
+
+limiar_est = 0; %Limiar de comparação
+info_est = info_rx(N/2:N:end)>limiar_est; %Chave de amostragem, threshold comparison, jogou em níveis lógicos
+%Pegando dados do sinal à cada N/2
+
+subplot(3,1,3);
+stem(info_est);
+xlim([0 50]);
+ylim([0 1]);
+title('Sinal estimado recebido');
+
+num_err = sum(xor(info_bin, info_est)); %Verificando o erro
+taxa_erro = num_err/num_simb
+
+%% Variando valores de SNR na recepção de sinais
+
+% Formatando em vários níveis
+
+clear all
+close all
+clc
+
+% Formatando em mais de 1 nível
+
+N = 100; %Amostras por pulso
+M = 2;  % Número de níveis
+A = 1; % Amplitude máxima
+dist_nivel = 2; %Distancia entre níveis
+
+% Número de bits por nível
+l = log2(M);
+
+% Gerando número de símbolos:
+num_simb = 100000;
+
+% Informação de entrada
+info_bin = randint(1, num_simb*l);
+
+% Fazendo o reshape para o bi2de
+info_bin = transpose(reshape(info_bin, l , num_simb));
+
+% Transformando em decimal à cada 2 bits:
+info = bi2de(info_bin, 'left-msb')*dist_nivel-A;%----- Mapeamento: 00 --> 0 --> -3
+info_up = upsample(info,N);                 %             01 --> 1 --> -1
+                                            %             10 --> 2 -->  2
+                                            %             11 --> 3 -->  3
+% Filtrando
+filtro = ones(1, N);
+info_tx = filter(filtro, 1, info_up);
+                                                     
+% plotando
+
+plot(info_tx)
+xlim([0 20*N])
+ylim([-4 4])
+title('Sinal na transmissão');
+
+SNRmin = 0;
+SNRmax = 15;
+
+limiar_est = 0;
+
+% Variando relação sinal/ruído 
+for SNR = SNRmin:SNRmax
+    info_rx = awgn(info_tx,SNR);
+    info_est = info_rx(N/2:N:end)>limiar_est;
+    num_err(SNR+1) = sum(xor(info_bin, info_est)); %Verificando o erro
+    taxa_erro(SNR+1) = num_err(SNR+1)/num_simb;
+end
+
+% Plotando a taxa de erros:
+
+figure(2)
+semilogy([SNRmin:1:SNRmax], taxa_erro);
+xlim([0 15])
+grid
+
+title('Dependência da Taxa de erro pelo SNR');
+xlabel('SNR[dB]');
+ylabel('Bit Error Rate');
+
+
+%% Melhorando o desempenho:
+
+% Formatando em vários níveis
+
+clear all
+close all
+clc
+
+% Formatando em mais de 1 nível
+
+N = 100; % Amostras por símbolo
+M = 2;  % Número de níveis
+A = 1; % Amplitude máxima
+dist_nivel = 2; %Distancia entre níveis
+
+% Dados temporais:
+t_final = 5; % em segundos
+Rb = 1e3; % taxa de transmissão
+Rs = log2(M)/Rb; % taxa de símbolos
+fs = Rb*N % Frequência de amostragem
+t = [0:1/fs:t_final]; % Criando o eixo do tempo
+
+% Número de bits por nível
+l = log2(M);
+
+% Gerando número de símbolos:
+num_simb = 10000;
+
+% Informação de entrada
+info_bin = randint(1, num_simb*l);
+
+% Fazendo o reshape para o bi2de
+info_bin = transpose(reshape(info_bin, l , num_simb));
+
+% Transformando em decimal à cada 2 bits:
+info = bi2de(info_bin, 'left-msb')*dist_nivel-A;%----- Mapeamento: 00 --> 0 --> -3
+info_up = upsample(info,N);                 %             01 --> 1 --> -1
+                                            %             10 --> 2 -->  2
+                                            %             11 --> 3 -->  3
+% Filtrando
+filtro = ones(1, N);
+info_tx = filter(filtro, 1, info_up);
+                                                     
+% plotando
+
+plot(info_tx)
+xlim([0 20*N])
+ylim([-4 4])
+title('Sinal na transmissão');
+
+SNRmin = 0;
+SNRmax = 15;
+
+limiar_est = 0;
+
+
+
+% Variando relação sinal/ruído 
+for SNR = SNRmin:SNRmax
+    info_rx = awgn(info_tx,SNR);
+    info_est = info_rx(N/2:N:end)>limiar_est;
+    
+    num_err(SNR+1) = sum(xor(info_bin, info_est)); %Verificando o erro
+    taxa_erro(SNR+1) = num_err(SNR+1)/num_simb;
+end
+
+% Plotando a taxa de erros:
+
+figure(2)
+semilogy([SNRmin:1:SNRmax], taxa_erro);
+xlim([0 15])
+grid
+title('Dependência da Taxa de erro pelo SNR');
+xlabel('SNR[dB]');
+ylabel('Bit Error Rate');
+hold on
+
+% Variando relação sinal/ruído com filtro
+filtro = (fir1(40, (2*10000)/fs));
+for SNR = SNRmin:SNRmax
+    info_rx = awgn(info_tx,SNR);
+    info_rx_f = filter(filtro, 1, info_rx);
+    info_est = info_rx_f(N/2:N:end)>limiar_est;
+    num_err(SNR+1) = sum(xor(info_bin, info_est)); %Verificando o erro
+    taxa_erro(SNR+1) = num_err(SNR+1)/num_simb;
+end
+
+% Plotando a taxa de erros:
+
+semilogy([SNRmin:1:SNRmax], taxa_erro);
+legend(
